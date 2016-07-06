@@ -46,13 +46,22 @@
                         (println (:error res))
                         nil)))
 
+(defn insert-bookmark [conn bookmark]
+  (let [c (chan)
+        db    (.db r "offcourse")
+        table (.table db "bookmarks")
+        opp  (.insert table (clj->js bookmark))]
+    (.run opp conn #(go (>! c (or %1 %2))))
+    c))
+
+
 (defn ^:export handler [event context cb]
   (go
     (let [payload (event->payload event)
           connection (-> (<! (db-connect))
-                         handle-response )]
-      (println connection)
-      (cb nil (clj->js "HI")))))
+                         handle-response )
+          response (<! (insert-bookmark connection payload))]
+      (.close connection #(cb nil (clj->js response))))))
 
 (defn -main [] identity)
 (set! *main-cli-fn* -main)
