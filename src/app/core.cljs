@@ -1,7 +1,8 @@
 (ns app.core
   (:require [cljs.nodejs :as node]
             [cljs.core.match :refer-macros [match]]
-            [cljs.core.async :refer [<! put! close! chan >!]])
+            [cljs.core.async :refer [<! put! close! chan >!]]
+            [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (node/enable-util-print!)
@@ -25,10 +26,21 @@
 
 (defn event->payload [event]
   (-> event
-      (js->clj :keywordize-keys true)
       (extract-payload)
       (convert-payload)
       (dissoc :id)))
+
+(defn convert-event [event]
+  (let [event (js->clj event :keywordize-keys true)
+        payload (event->payload event)
+        event-source (-> event
+                         :Records
+                         first
+                         :eventSourceARN
+                         (str/split "/")
+                         last)]
+    {:payload payload
+     :event-source event-source}))
 
 (defn db-connect []
   (let [c (chan)]
@@ -46,21 +58,26 @@
                         (println (:error res))
                         nil)))
 
-(defn insert-bookmark [conn bookmark]
+(defn insert-bookmark [conn table-name data]
   (let [c (chan)
         db    (.db r "offcourse")
-        table (.table db "bookmarks")
-        opp  (.insert table (clj->js bookmark))]
+        table (.table db table-name)
+        opp  (.insert table (clj->js data))]
     (.run opp conn #(go (>! c (or %1 %2))))
     c))
 
+(def event-source->table-name
+  {"expanded-links" "bookmarks"
+   "fetched-resources-data" "resources"})
 
 (defn ^:export handler [event context cb]
   (go
-    (let [payload (event->payload event)
+    (let [{:keys [payload event-source] :as d} (convert-event event)
           connection (-> (<! (db-connect))
                          handle-response )
-          response (<! (insert-bookmark connection payload))]
+          table-name (event-source->table-name event-source)
+          response (<! (insert-bookmark connection table-name payload))]
+      (println response)
       (.close connection #(cb nil (clj->js response))))))
 
 (defn -main [] identity)
