@@ -13,22 +13,18 @@
                 :authKey (.. js/process -env -RETHINK_AUTH_KEY)})
 
 (defn convert-payload [data]
-  (-> js/JSON
-      (.parse (.toString (js/Buffer. data "base64") "ascii"))
-      (js->clj :keywordize-keys true)))
+  (println data)
+  (map #(-> js/JSON
+            (.parse (.toString (js/Buffer. %1 "base64") "ascii"))
+            (js->clj :keywordize-keys true)) data))
 
 (defn extract-payload [event]
-  (-> (:Records event)
-      first
-      first
-      second
-      :data))
+  (map #(-> %1 :kinesis :data) (:Records event)))
 
 (defn event->payload [event]
   (-> event
       (extract-payload)
-      (convert-payload)
-      (dissoc :id)))
+      (convert-payload)))
 
 (defn convert-event [event]
   (let [event (js->clj event :keywordize-keys true)
@@ -58,7 +54,7 @@
                         (println (:error res))
                         nil)))
 
-(defn insert-bookmark [conn table-name data]
+(defn insert-bookmarks [conn table-name data]
   (let [c (chan)
         db    (.db r "offcourse")
         table (.table db table-name)
@@ -66,18 +62,17 @@
     (.run opp conn #(go (>! c (or %1 %2))))
     c))
 
-(def event-source->table-name
-  {"expanded-links" "bookmarks"
-   "fetched-resources-data" "resources"})
+(defn extract-records [payload]
+  payload)
 
 (defn ^:export handler [event context cb]
+  (println (.stringify js/JSON event))
   (go
-    (let [{:keys [payload event-source] :as d} (convert-event event)
+    (let [{:keys [payload event-source]} (convert-event event)
           connection (-> (<! (db-connect))
                          handle-response )
-          table-name (event-source->table-name event-source)
-          response (<! (insert-bookmark connection table-name payload))]
-      (println response)
+          records (extract-records payload)
+          response (<! (insert-bookmarks connection "bookmarks" records))]
       (.close connection #(cb nil (clj->js response))))))
 
 (defn -main [] identity)

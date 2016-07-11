@@ -3,19 +3,50 @@
         {
             "kinesis": {
                 "kinesisSchemaVersion": "1.0",
-                "partitionKey": "url",
-                "sequenceNumber": "49563567057046961355977158921884735042285631406618968066",
-                "data": "eyJ1c2VyIjoieWVlaGFhIiwiaWQiOjc0OTg2NDEzNzQ2MzkxNDUwMCwidXJsIjoiaHR0cDovL3d3dy5ueXRpbWVzLmNvbS8yMDE2LzA3LzA0L3lvdXItbW9uZXkvYXMtc2VsZi1kcml2aW5nLWNhcnMtaGl0LXRoZS1yb2FkLWlubm92YXRpb24taXMtb3V0cGFjaW5nLWluc3VyYW5jZS5odG1sIiwidGltZXN0YW1wIjoiTW9uIEp1bCAwNCAwNzoxNToxNiArMDAwMCAyMDE2In0=",
-                "approximateArrivalTimestamp": 1467751712.323
+                "partitionKey": "user",
+                "sequenceNumber": "49563744261622804265720561326764299783216321722255933442",
+                "data": "eyJ1c2VyIjoieWVlaGFhIiwiaWQiOjc1MjQzNDEzNDAzMTY4NzcwMCwidXJsIjoiaHR0cDovL2dvb2dsZS5jb20vbmV3c3N0YW5kL3MvQ0JJd2g2M1lfaVUiLCJ0aW1lc3RhbXAiOiJNb24gSnVsIDExIDA5OjI3OjMxICswMDAwIDIwMTYifQ==",
+                "approximateArrivalTimestamp": 1468244030.523
             },
             "eventSource": "aws:kinesis",
             "eventVersion": "1.0",
-            "eventID": "shardId-000000000000:49563567057046961355977158921884735042285631406618968066",
+            "eventID": "shardId-000000000000:49563744261622804265720561326764299783216321722255933442",
             "eventName": "aws:kinesis:record",
             "invokeIdentityArn": "arn:aws:iam::774182433398:role/lambda_kinesis_role",
             "awsRegion": "eu-west-1",
-            "eventSourceARN": "arn:aws:kinesis:eu-west-1:774182433398:stream/expanded-links"
+            "eventSourceARN": "arn:aws:kinesis:eu-west-1:774182433398:stream/tweeted-bookmarks"
+        },
+        {
+            "kinesis": {
+                "kinesisSchemaVersion": "1.0",
+                "partitionKey": "user",
+                "sequenceNumber": "49563744261622804265720561326765508709035936351430639618",
+                "data": "eyJ1c2VyIjoieWVlaGFhIiwiaWQiOjc1MjA1ODQ3ODM2NjE2NzAwMCwidXJsIjoiaHR0cDovL2dvb2dsZS5jb20vbmV3c3N0YW5kL3MvQ0JJdzM5Q04teVUiLCJ0aW1lc3RhbXAiOiJTdW4gSnVsIDEwIDA4OjM0OjQ4ICswMDAwIDIwMTYifQ==",
+                "approximateArrivalTimestamp": 1468244030.525
+            },
+            "eventSource": "aws:kinesis",
+            "eventVersion": "1.0",
+            "eventID": "shardId-000000000000:49563744261622804265720561326765508709035936351430639618",
+            "eventName": "aws:kinesis:record",
+            "invokeIdentityArn": "arn:aws:iam::774182433398:role/lambda_kinesis_role",
+            "awsRegion": "eu-west-1",
+            "eventSourceARN": "arn:aws:kinesis:eu-west-1:774182433398:stream/tweeted-bookmarks"
+        },
+        {
+            "kinesis": {
+                "kinesisSchemaVersion": "1.0",
+                "partitionKey": "user",
+                "(sequenceNumber)": "49563744261622804265720561326766717634855550980605345794",
+                "data": "eyJ1c2VyIjoieWVlaGFhIiwiaWQiOjc1MTg2OTE1Nzc3MjI1NTIwMCwidXJsIjoiaHR0cDovL3BpdGNoZm9yay5jb20vbmV3cy82NjY4Ny1taWd1ZWwtY3JpZXMtb24tc3RhZ2Utd2hpbGUtYWRkcmVzc2luZy1wb2xpY2UtdmlvbGVuY2UvIiwidGltZXN0YW1wIjoiU2F0IEp1bCAwOSAyMDowMjozMCArMDAwMCAyMDE2In0=",
+                "approximateArrivalTimestamp": 1468244030.526
+            },
+            "eventSource": "aws:kinesis",
+            "eventVersion": "1.0",
+            "eventID": "shardId-000000000000:49563744261622804265720561326766717634855550980605345794",
+            "eventName": "aws:kinesis:record",
+            "invokeIdentityArn": "arn:aws:iam::774182433398:role/lambda_kinesis_role",
+            "awsRegion": "eu-west-1",
+            "eventSourceARN": "arn:aws:kinesis:eu-west-1:774182433398:stream/tweeted-bookmarks"
         }
     ]
 }
-
