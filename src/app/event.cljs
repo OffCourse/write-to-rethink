@@ -1,27 +1,35 @@
 (ns app.event
-  (:require [clojure.string :as str]))
+  (:require [cljs.spec :as spec]
+            [app.specs :as specs]
+            [clojure.string :as str]))
 
-(defn convert-payload [data]
-  (map #(-> js/JSON
-            (.parse (.toString (js/Buffer. %1 "base64") "ascii"))
-            (js->clj :keywordize-keys true)) data))
+(defn json->clj [data]
+  (-> (.parse js/JSON data "ascii")
+       (js->clj :keywordize-keys true)))
 
-(defn extract-payload [event]
-  (map #(-> %1 :kinesis :data) (:Records event)))
+(defn buffer->clj [data]
+  (-> data
+      (js/Buffer "base64")
+      (.toString "ascii")
+      json->clj))
 
-(defn event->payload [event]
-  (-> event
-      (extract-payload)
-      (convert-payload)))
+(defn extract-payload [records]
+  (map #(-> %1 :kinesis :data buffer->clj) records))
+
+(defn extract-event-source [record]
+  (-> record
+      :eventSourceARN
+      (str/split "/")
+      last))
+
+(spec/fdef convert :ret ::specs/event)
 
 (defn convert [event]
-  (let [event (js->clj event :keywordize-keys true)
-        payload (event->payload event)
-        event-source (-> event
-                         :Records
-                         first
-                         :eventSourceARN
-                         (str/split "/")
-                         last)]
-    {:records payload
-     :event-source event-source}))
+  (let [records (:Records (js->clj event :keywordize-keys true))
+        payload (extract-payload records)
+        event-source (extract-event-source (first records))
+        event {:payload payload
+               :type event-source}]
+    event))
+
+(spec/instrument #'convert)

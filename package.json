@@ -4,7 +4,7 @@
   "description": "react to kinesis added-bookmark events by saving it to rethinkdb",
   "main": "index.js",
   "repository": {
-    "type": "git"re
+    "type": "git",
     "url": ""
   },
   "author": "yeehaa123",
